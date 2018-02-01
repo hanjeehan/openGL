@@ -2,6 +2,9 @@
 #include "MyGlWindow.h"
 #include <glm/gtc/type_ptr.hpp>
 
+//need to create so called VAO vertex array object
+GLuint VAO;
+
 MyGlWindow::MyGlWindow(int w, int h)
 
 //==========================================================================
@@ -30,31 +33,75 @@ void MyGlWindow::setupBuffer()
     shaderProgram->initFromFiles("simple.vert", "simple.frag");
 
     //three vertices
-    const auto vertexPosition[] = {
+    const float vertexPosition[] = {
             -0.2f, 0,    0, 1,
             0,     0.4f, 0, 1,
             0.2f,  0,    0, 1
     };
-    const auto vertexColors[] = {
+    const float vertexColors[] = {
             1, 0, 0, //red
             0, 1, 0, //blue
             0, 0, 1  //green
     };
 
-    //need to create so called VAO vertex array object
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+    shaderProgram->addAttribute("coord3d");
+    shaderProgram->addAttribute("v_color");
+    GLuint vbo_vertices, vbo_color;
 
+    // create vbo
+    glGenBuffers(1, &vbo_vertices);
+    //bind vbo
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices);
+    //allocate mem
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 4 * 3, &vertexPosition, GL_STATIC_DRAW);
+    //tell gpu how to interpretate the data
+    glVertexAttribPointer(
+            shaderProgram->attribute("coord3d"), //location of a specific attribute
+            4, // how many data for each vertex
+            GL_FLOAT, // type
+            GL_FALSE,
+            0,
+            0
+    );
+    glEnableVertexAttribArray(shaderProgram->attribute("coord3d"));
+
+    // create vbo
+    glGenBuffers(1, &vbo_color);
+    //bind vbo
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_color);
+    //allocate mem
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 3, &vertexColors, GL_STATIC_DRAW);
+    //tell gpu how to interpretate the data
+    glVertexAttribPointer(
+            shaderProgram->attribute("v_color"), //location of a specific attribute
+            3, // how many data for each vertex
+            GL_FLOAT, // type
+            GL_FALSE,
+            0,
+            0
+    );
+    glEnableVertexAttribArray(shaderProgram->attribute("v_color"));
+
+    //close vao
+    glBindVertexArray(0);
 }
 
 void MyGlWindow::draw(void)
 {
-	
-	glClearColor(0.2f, 0.2f, .2f, 0);
+    //background color
+	glClearColor(0.2f, 0.2f, 0.2f, 0);
+    //clear buffers (color and depth)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
 
 	glEnable(GL_DEPTH_TEST);
-	
-	glViewport(0, 0, m_width, m_height);	
-
-
+	//set the canvas, 0 0 bottom
+	glViewport(0, 0, m_width, m_height);
+    //use this shader
+    shaderProgram->use();
+    glBindVertexArray(VAO);
+    //what to draw
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    shaderProgram->disable();
 }

@@ -79,9 +79,11 @@ int main(void)
 	/* Initialize the library */
 	if (!glfwInit())
 	{
-
 	}
 
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	int width = 800;
 	int height = 800;
