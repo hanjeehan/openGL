@@ -48,6 +48,13 @@ void MyGlWindow::setupBuffer()
     glBindVertexArray(VAO);
     shaderProgram->addAttribute("coord3d");
     shaderProgram->addAttribute("v_color");
+
+    shaderProgram->addUniform("translate");
+    shaderProgram->addUniform("rotate");
+
+    //shaderProgram->addUniform("model");
+
+    //vbo
     GLuint vbo_vertices, vbo_color;
 
     // create vbo
@@ -101,6 +108,11 @@ void MyGlWindow::draw(void)
     //use this shader
     shaderProgram->use();
     glBindVertexArray(VAO);
+
+    glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.3f, 0.3f, 0));
+    glm::mat4 rotate = glm::rotate(45.0f, glm::vec3(0.3f, 0.3f, 0));
+    glUniformMatrix4fv(shaderProgram->uniform("translate"), 1, GL_FALSE, glm::value_ptr(translate));
+    glUniformMatrix4fv(shaderProgram->uniform("rotate"), 1, GL_FALSE, glm::value_ptr(rotate));
     //what to draw
     glDrawArrays(GL_TRIANGLES, 0, 3);
     shaderProgram->disable();
