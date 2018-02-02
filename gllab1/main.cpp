@@ -1,6 +1,3 @@
-
-//#define GLFW_INCLUDE_GLU
-
 #include <iostream>
 #include <chrono>
 #include <GL/glew.h>
@@ -21,15 +18,167 @@ double m_lastMouseX;
 double m_lastMouseY;
 double cx, cy;
 
-static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, GLFW_TRUE);
-}
-
 void window_size_callback(GLFWwindow* window, int width, int height)
 {
-	win->setSize(width, height);
+    win->setSize(width, height);
+    win->setAspect(width / (float)height);
+
+}
+
+static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, GLFW_TRUE);
+}
+
+
+static void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos)
+{
+    cx = xpos;
+    cy = ypos;
+}
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+    if (action == GLFW_PRESS) {
+        double xpos, ypos;
+        glfwGetCursorPos(window, &xpos, &ypos);
+        m_lastMouseX = xpos;
+        m_lastMouseY = ypos;
+    }
+
+    if (button == GLFW_MOUSE_BUTTON_LEFT) {
+        if (GLFW_PRESS == action)
+            lbutton_down = true;
+        else if (GLFW_RELEASE == action)
+            lbutton_down = false;
+    }
+
+    else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
+        if (GLFW_PRESS == action)
+            rbutton_down = true;
+        else if (GLFW_RELEASE == action)
+            rbutton_down = false;
+    }
+
+    else if (button == GLFW_MOUSE_BUTTON_MIDDLE) {
+        if (GLFW_PRESS == action)
+            mbutton_down = true;
+        else if (GLFW_RELEASE == action)
+            mbutton_down = false;
+    }
+}
+
+
+void mouseDragging(double width, double height)
+{
+
+
+    if (lbutton_down) {
+        float fractionChangeX = static_cast<float>(cx - m_lastMouseX) / static_cast<float>(width);
+        float fractionChangeY = static_cast<float>(m_lastMouseY - cy) / static_cast<float>(height);
+        win->m_viewer->rotate(fractionChangeX, fractionChangeY);
+    }
+    else if (mbutton_down) {
+        float fractionChangeX = static_cast<float>(cx - m_lastMouseX) / static_cast<float>(width);
+        float fractionChangeY = static_cast<float>(m_lastMouseY - cy) / static_cast<float>(height);
+        win->m_viewer->zoom(fractionChangeY);
+    }
+    else if (rbutton_down) {
+        float fractionChangeX = static_cast<float>(cx - m_lastMouseX) / static_cast<float>(width);
+        float fractionChangeY = static_cast<float>(m_lastMouseY - cy) / static_cast<float>(height);
+        win->m_viewer->translate(-fractionChangeX, -fractionChangeY, 1);
+    }
+    m_lastMouseX = cx;
+    m_lastMouseY = cy;
+}
+
+
+
+int main() {
+    GLFWwindow* window;
+
+    /* Initialize the library */
+    if (!glfwInit())
+    {
+    }
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    int width = 800;
+    int height = 800;
+
+
+    window = glfwCreateWindow(width, height, "Chinese food is good", NULL, NULL);
+    glfwSetWindowSizeCallback(window, window_size_callback);
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
+    glfwSetCursorPosCallback(window, cursor_pos_callback);
+    glfwSetKeyCallback(window, key_callback);
+
+    if (!window)
+    {
+    glfwTerminate();
+    return -1;
+    }
+
+
+
+    glfwMakeContextCurrent(window);
+
+    GLenum err = glewInit();
+    if (err != GLEW_OK)
+    {
+    //Problem: glewInit failed, something is seriously wrong.
+    fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+    return 0;
+    }
+
+    printf("OpenGL %s, GLSL %s\n", glGetString(GL_VERSION),
+    glGetString(GL_SHADING_LANGUAGE_VERSION));
+
+
+    //glfwSwapInterval(1);  //enable vsync
+
+
+    win = new MyGlWindow(width, height);
+
+
+    double previousTime = glfwGetTime();
+    int frameCount = 0;
+    double lastTime;
+
+
+    glfwSetKeyCallback(window, key_callback);
+    glfwSetWindowSizeCallback(window, window_size_callback);
+
+    glfwSetWindowTitle(window, "Chinese food is good");
+
+    while (!glfwWindowShouldClose(window))
+    {
+        // Rendering
+        int display_w, display_h;
+        glfwGetFramebufferSize(window, &display_w, &display_h);
+
+        win->draw();
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000/60));
+        /* Swap front and back buffers */
+        glfwSwapBuffers(window);
+
+        /* Poll for and process events */
+        glfwPollEvents();
+
+        mouseDragging(display_w, display_h);
+
+    }
+
+    glfwDestroyWindow(window);
+    glfwTerminate();
+
+    return 0;
+
 }
 
 void exercice1(){
@@ -58,8 +207,6 @@ void exercice1(){
     //Normalize vector v(1,3,4).
 }
 
-int main(void)
-{
 //    glm::vec3 a(1, 2, 3);
 //    glm::vec3 b(-1, 0, -2);
 //
@@ -75,88 +222,3 @@ int main(void)
 //    std::cout << glm::to_string(c) << std::endl;
 
 //    exercice1();
-
-    std::srand(static_cast<unsigned>(std::time(nullptr)));
-	GLFWwindow* window;
-
-	/* Initialize the library */
-	if (!glfwInit())
-	{
-	}
-
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	int width = 800;
-	int height = 800;
-
-
-	window = glfwCreateWindow(width, height, "Chinese food is good", NULL, NULL);
-
-
-	if (!window)
-	{
-	glfwTerminate();
-	return -1;
-	}
-
-
-
-	glfwMakeContextCurrent(window);
-	
-	GLenum err = glewInit();
-	if (err != GLEW_OK)
-	{
-	//Problem: glewInit failed, something is seriously wrong.
-	fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
-	return 0;
-	}
-
-	printf("OpenGL %s, GLSL %s\n", glGetString(GL_VERSION),
-	glGetString(GL_SHADING_LANGUAGE_VERSION));
-
-
-	glfwSwapInterval(1);  //enable vsync
-
-	
-	win = new MyGlWindow(width, height);
-
-	
-	double previousTime = glfwGetTime();
-	int frameCount = 0;
-	double lastTime;
-
-	
-	glfwSetKeyCallback(window, key_callback);
-	glfwSetWindowSizeCallback(window, window_size_callback);
-
-	glfwSetWindowTitle(window, "Chinese food is good");
-
-	while (!glfwWindowShouldClose(window))
-	{
-
-
-
-	// Rendering
-	int display_w, display_h;
-	glfwGetFramebufferSize(window, &display_w, &display_h);
-
-	win->draw();
-
-	
-	glfwSwapBuffers(window);
-
-
-	glfwPollEvents();
-		std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-	}
-
-	glfwDestroyWindow(window);
-	glfwTerminate();
-
-	return 0;
-}
-
-

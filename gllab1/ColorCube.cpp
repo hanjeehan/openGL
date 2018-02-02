@@ -4,34 +4,33 @@
 
 #include <GL/glew.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <vector>
 #include "ColorCube.h"
 
 ColorCube::ColorCube(){
-    GLfloat cube_vertices[] = {
-            // front
-            -1.0, -1.0, 1.0,
-            1.0, -1.0, 1.0,
-            1.0, 1.0, 1.0,
-            -1.0, 1.0, 1.0,
-            // back
-            -1.0, -1.0, -1.0,
-            1.0, -1.0, -1.0,
-            1.0, 1.0, -1.0,
-            -1.0, 1.0, -1.0,
-    };
+    std::vector<glm::vec3> cube_vertices;
+    //front
+    cube_vertices.push_back(glm::vec3(0, 0, 2.0));
+    cube_vertices.push_back(glm::vec3(2.0, 0, 2.0));
+    cube_vertices.push_back(glm::vec3(2, 2, 2));
+    cube_vertices.push_back(glm::vec3(0, 2, 2));
+    // back
+    cube_vertices.push_back(glm::vec3(0, 0, 0));
+    cube_vertices.push_back(glm::vec3(2, 0, 0));
+    cube_vertices.push_back(glm::vec3(2, 2, 0));
+    cube_vertices.push_back(glm::vec3(0, 2, 0));
 
-    GLfloat cube_colors[] = {
-            // front colors
-            1.0, 0.0, 0.0,
-            0.0, 1.0, 0.0,
-            0.0, 0.0, 1.0,
-            1.0, 1.0, 1.0,
-            // back colors
-            1.0, 0.0, 0.0,
-            0.0, 1.0, 0.0,
-            0.0, 0.0, 1.0,
-            1.0, 1.0, 1.0,
-    };
+    std::vector<glm::vec3> cube_colors;
+    // front colors
+    cube_colors.push_back(glm::vec3(1.0, 0.0, 0.0));
+    cube_colors.push_back(glm::vec3(0.0, 1.0, 0.0));
+    cube_colors.push_back(glm::vec3(0.0, 0.0, 1.0));
+    cube_colors.push_back(glm::vec3(1.0, 1.0, 1.0));
+    // back colors
+    cube_colors.push_back(glm::vec3(1.0, 0.0, 0.0));
+    cube_colors.push_back(glm::vec3(0.0, 1.0, 0.0));
+    cube_colors.push_back(glm::vec3(0.0, 0.0, 1.0));
+    cube_colors.push_back(glm::vec3(1.0, 1.0, 1.0));
 
     //make an instance od shader object
     shaderProgram = new ShaderProgram();
@@ -65,9 +64,7 @@ ColorCube::ColorCube(){
     //shaderProgram->addUniform("translate");
     //shaderProgram->addUniform("rotate");
 
-    shaderProgram->addUniform("model");
-    shaderProgram->addUniform("view");
-    shaderProgram->addUniform("proj");
+    shaderProgram->addUniform("mvp");
 
     //vbo
     GLuint vbo_vertices, vbo_color;
@@ -77,7 +74,7 @@ ColorCube::ColorCube(){
     //bind vbo
     glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices);
     //allocate mem
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 8, &cube_vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * cube_vertices.size(), cube_vertices.data(), GL_STATIC_DRAW);
     //tell gpu how to interpretate the data
     glVertexAttribPointer(
             shaderProgram->attribute("coord3d"), //location of a specific attribute
@@ -94,7 +91,7 @@ ColorCube::ColorCube(){
     //bind vbo
     glBindBuffer(GL_ARRAY_BUFFER, vbo_color);
     //allocate mem
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 8, &cube_colors, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * cube_colors.size(), cube_colors.data(), GL_STATIC_DRAW);
     //tell gpu how to interpretate the data
     glVertexAttribPointer(
             shaderProgram->attribute("v_color"), //location of a specific attribute
@@ -132,9 +129,10 @@ void ColorCube::draw(glm::mat4 model, glm::mat4 view, glm::mat4 proj){
     //glUniformMatrix4fv(shaderProgram->uniform("translate"), 1, GL_FALSE, glm::value_ptr(translate));
     //glUniformMatrix4fv(shaderProgram->uniform("rotate"), 1, GL_FALSE, glm::value_ptr(rotate));
 
-    glUniformMatrix4fv(shaderProgram->uniform("proj"), 1, GL_FALSE, glm::value_ptr(proj));
-    glUniformMatrix4fv(shaderProgram->uniform("view"), 1, GL_FALSE, glm::value_ptr(view));
-    glUniformMatrix4fv(shaderProgram->uniform("model"), 1, GL_FALSE, glm::value_ptr(model));
+    glm::mat4 mvp = proj * view * model;
+    glUniformMatrix4fv(shaderProgram->uniform("mvp"), 1, GL_FALSE, glm::value_ptr(mvp));
+    //glUniformMatrix4fv(shaderProgram->uniform("view"), 1, GL_FALSE, glm::value_ptr(view));
+    //glUniformMatrix4fv(shaderProgram->uniform("model"), 1, GL_FALSE, glm::value_ptr(model));
     //what to draw
     //VAO
     //glDrawArrays(GL_TRIANGLES, 0, 6);
