@@ -66,6 +66,8 @@ ColorCube::ColorCube(){
     //shaderProgram->addUniform("rotate");
 
     shaderProgram->addUniform("model");
+    shaderProgram->addUniform("view");
+    shaderProgram->addUniform("proj");
 
     //vbo
     GLuint vbo_vertices, vbo_color;
@@ -120,7 +122,7 @@ ColorCube::ColorCube(){
 
 }
 
-void ColorCube::draw(){
+void ColorCube::draw(glm::mat4 model, glm::mat4 view, glm::mat4 proj){
     //use this shader
     shaderProgram->use();
     glBindVertexArray(VAO);
@@ -130,12 +132,9 @@ void ColorCube::draw(){
     //glUniformMatrix4fv(shaderProgram->uniform("translate"), 1, GL_FALSE, glm::value_ptr(translate));
     //glUniformMatrix4fv(shaderProgram->uniform("rotate"), 1, GL_FALSE, glm::value_ptr(rotate));
 
-    float step = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX / 1000) - 500.0f;
-    step /= 10000;
-    m_model.glPushMatrix();
-    m_model.glTranslate(1 * step, 1 * step, 0);
-    m_model.glRotate(45.0, 0.1, 0.1, 0.1);
-    glUniformMatrix4fv(shaderProgram->uniform("model"), 1, GL_FALSE, glm::value_ptr(m_model.getMatrix()));
+    glUniformMatrix4fv(shaderProgram->uniform("model"), 1, GL_FALSE, glm::value_ptr(model));
+    glUniformMatrix4fv(shaderProgram->uniform("view"), 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(shaderProgram->uniform("proj"), 1, GL_FALSE, glm::value_ptr(proj));
     //what to draw
     //VAO
     //glDrawArrays(GL_TRIANGLES, 0, 6);

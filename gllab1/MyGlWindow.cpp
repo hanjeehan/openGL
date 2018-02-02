@@ -27,9 +27,14 @@ void MyGlWindow::draw(void)
 	glClearColor(0.2f, 0.2f, 0.2f, 0);
     //clear buffers (color and depth)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	glEnable(GL_DEPTH_TEST);
 	//set the canvas, 0 0 bottom
 	glViewport(0, 0, m_width, m_height);
-    m_cube->draw();
+
+    float step = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX / 1000) - 500.0f;
+    step /= 10000;
+    m_model.glPushMatrix();
+    m_model.glTranslate(1 * step, 1 * step, 0);
+    m_model.glRotate(45.0, 0.1, 0.1, 0.1);
+    m_cube->draw(m_model.getMatrix(), m_model.getMatrix(), m_model.getMatrix());
 }

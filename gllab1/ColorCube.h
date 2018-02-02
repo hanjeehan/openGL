@@ -13,13 +13,12 @@ class ColorCube {
 public:
     ColorCube();
 
-    void draw();
+    void draw(glm::mat4 model, glm::mat4 view, glm::mat4 proj);
 
 private:
     ShaderProgram * shaderProgram;
     //need to create so called VAO vertex array object
     GLuint VAO;
-    Model m_model;
 };
 
 

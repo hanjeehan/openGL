@@ -20,5 +20,6 @@ public:
 private:
 	int m_width;
 	int m_height;
+    Model m_model;
     ColorCube *m_cube;
 };

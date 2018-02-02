@@ -132,7 +132,9 @@ int main(void)
 	glfwSetWindowSizeCallback(window, window_size_callback);
 
 	glfwSetWindowTitle(window, "Chinese food is good");
-	
+
+    glm::vec3 eye(0, -10, 2), center(0, 0, 0), up(0, 0, 1);
+    glm::lookAt(eye, center, up);
 
 	while (!glfwWindowShouldClose(window))
 	{
