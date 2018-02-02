@@ -10,6 +10,7 @@
 
 #include "Loader.h"
 #include "ModelView.h"
+#include "ColorCube.h"
 
 class MyGlWindow {
 public:
@@ -19,7 +20,5 @@ public:
 private:
 	int m_width;
 	int m_height;
-	Model m_model;
-	ShaderProgram * shaderProgram;
-	void setupBuffer();
+    ColorCube *m_cube;
 };
