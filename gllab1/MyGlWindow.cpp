@@ -34,14 +34,20 @@ void MyGlWindow::setupBuffer()
 
     //three vertices
     const float vertexPosition[] = {
-            -0.2f, 0,    0, 1,
-            0,     0.4f, 0, 1,
-            0.2f,  0,    0, 1
+            0.0f,  0,    0, 1,
+            0,     0.5f, 0, 1,
+            0.5f,  0,    0, 1,
+            0.5f,  0,    0, 1,
+            0,     0.5f, 0, 1,
+            0.5f,  0.5f, 0, 1
     };
     const float vertexColors[] = {
             1, 0, 0, //red
             0, 1, 0, //blue
-            0, 0, 1  //green
+            0, 0, 1,  //green
+            0, 0, 1, //green
+            0, 1, 0, //blue
+            1, 0, 0  //red
     };
 
     glGenVertexArrays(1, &VAO);
@@ -52,7 +58,7 @@ void MyGlWindow::setupBuffer()
     //shaderProgram->addUniform("translate");
     //shaderProgram->addUniform("rotate");
 
-    shaderProgram->addUniform("model");
+    //shaderProgram->addUniform("model");
 
     //vbo
     GLuint vbo_vertices, vbo_color;
@@ -62,7 +68,7 @@ void MyGlWindow::setupBuffer()
     //bind vbo
     glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices);
     //allocate mem
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 4 * 3, &vertexPosition, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 4 * 6, &vertexPosition, GL_STATIC_DRAW);
     //tell gpu how to interpretate the data
     glVertexAttribPointer(
             shaderProgram->attribute("coord3d"), //location of a specific attribute
@@ -79,7 +85,7 @@ void MyGlWindow::setupBuffer()
     //bind vbo
     glBindBuffer(GL_ARRAY_BUFFER, vbo_color);
     //allocate mem
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 3, &vertexColors, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 6, &vertexColors, GL_STATIC_DRAW);
     //tell gpu how to interpretate the data
     glVertexAttribPointer(
             shaderProgram->attribute("v_color"), //location of a specific attribute
@@ -121,6 +127,6 @@ void MyGlWindow::draw(void)
     m_model.glRotate(45.0, 0.1, 0.1, 0.1);
     glUniformMatrix4fv(shaderProgram->uniform("model"), 1, GL_FALSE, glm::value_ptr(m_model.getMatrix()));
     //what to draw
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
     shaderProgram->disable();
 }
