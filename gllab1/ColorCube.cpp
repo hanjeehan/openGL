@@ -132,9 +132,9 @@ void ColorCube::draw(glm::mat4 model, glm::mat4 view, glm::mat4 proj){
     //glUniformMatrix4fv(shaderProgram->uniform("translate"), 1, GL_FALSE, glm::value_ptr(translate));
     //glUniformMatrix4fv(shaderProgram->uniform("rotate"), 1, GL_FALSE, glm::value_ptr(rotate));
 
-    glUniformMatrix4fv(shaderProgram->uniform("model"), 1, GL_FALSE, glm::value_ptr(model));
-    glUniformMatrix4fv(shaderProgram->uniform("view"), 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(shaderProgram->uniform("proj"), 1, GL_FALSE, glm::value_ptr(proj));
+    glUniformMatrix4fv(shaderProgram->uniform("view"), 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(shaderProgram->uniform("model"), 1, GL_FALSE, glm::value_ptr(model));
     //what to draw
     //VAO
     //glDrawArrays(GL_TRIANGLES, 0, 6);
