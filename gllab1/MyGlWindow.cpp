@@ -49,10 +49,10 @@ void MyGlWindow::setupBuffer()
     shaderProgram->addAttribute("coord3d");
     shaderProgram->addAttribute("v_color");
 
-    shaderProgram->addUniform("translate");
-    shaderProgram->addUniform("rotate");
+    //shaderProgram->addUniform("translate");
+    //shaderProgram->addUniform("rotate");
 
-    //shaderProgram->addUniform("model");
+    shaderProgram->addUniform("model");
 
     //vbo
     GLuint vbo_vertices, vbo_color;
@@ -109,10 +109,17 @@ void MyGlWindow::draw(void)
     shaderProgram->use();
     glBindVertexArray(VAO);
 
-    glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.3f, 0.3f, 0));
-    glm::mat4 rotate = glm::rotate(45.0f, glm::vec3(0.3f, 0.3f, 0));
-    glUniformMatrix4fv(shaderProgram->uniform("translate"), 1, GL_FALSE, glm::value_ptr(translate));
-    glUniformMatrix4fv(shaderProgram->uniform("rotate"), 1, GL_FALSE, glm::value_ptr(rotate));
+    //glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.3f, 0.3f, 0));
+    //glm::mat4 rotate = glm::rotate(45.0f, glm::vec3(0.3f, 0.3f, 0));
+    //glUniformMatrix4fv(shaderProgram->uniform("translate"), 1, GL_FALSE, glm::value_ptr(translate));
+    //glUniformMatrix4fv(shaderProgram->uniform("rotate"), 1, GL_FALSE, glm::value_ptr(rotate));
+
+    float step = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX / 1000) - 500.0f;
+    step /= 10000;
+    m_model.glPushMatrix();
+    m_model.glTranslate(1 * step, 1 * step, 0);
+    m_model.glRotate(45.0, 0.1, 0.1, 0.1);
+    glUniformMatrix4fv(shaderProgram->uniform("model"), 1, GL_FALSE, glm::value_ptr(m_model.getMatrix()));
     //what to draw
     glDrawArrays(GL_TRIANGLES, 0, 3);
     shaderProgram->disable();

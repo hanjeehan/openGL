@@ -2,10 +2,12 @@
 //#define GLFW_INCLUDE_GLU
 
 #include <iostream>
+#include <chrono>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/vec3.hpp>
 #include <glm/gtx/string_cast.hpp>
+#include <thread>
 
 
 #include "MyGlWindow.h"
@@ -74,6 +76,7 @@ int main(void)
 
 //    exercice1();
 
+    std::srand(static_cast<unsigned>(std::time(nullptr)));
 	GLFWwindow* window;
 
 	/* Initialize the library */
@@ -147,7 +150,8 @@ int main(void)
 
 
 	glfwPollEvents();
-	
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000/60));
+
 	}
 
 	glfwDestroyWindow(window);

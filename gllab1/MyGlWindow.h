@@ -8,8 +8,8 @@
 #include "glm/gtc/matrix_inverse.hpp"
 #include "glm/gtx/transform.hpp"
 
-
 #include "Loader.h"
+#include "ModelView.h"
 
 class MyGlWindow {
 public:
@@ -19,6 +19,7 @@ public:
 private:
 	int m_width;
 	int m_height;
+	Model m_model;
 	ShaderProgram * shaderProgram;
 	void setupBuffer();
 };
