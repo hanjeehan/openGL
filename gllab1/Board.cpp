@@ -10,8 +10,8 @@
 Board::Board(int size, int nsquare) : size(size), nsquare(nsquare)
 {
 
-    float dark[3] = { .7f, .7f, .7f};
-    float light[3] = { .3f, .3f, .3f};
+    float dark[3] = { 0, 0, 0};
+    float light[3] = { 1, 0, 0};
     std::vector<glm::vec3> vlist;
     std::vector<glm::vec3> clist;
     float min = -size / 2, max = size / 2;
