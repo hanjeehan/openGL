@@ -13,6 +13,8 @@
 #include "ColorCube.h"
 #include "Viewer.h"
 #include "Board.h"
+#include "Sphere.h"
+#include "vboteapot.h"
 
 class MyGlWindow {
 public:
@@ -27,5 +29,7 @@ private:
     float m_aspect;
     Model m_model;
     ColorCube *m_cube;
+    Sphere *m_sphere;
     Board * m_board;
+    VBOTeapot * m_pot;
 };
