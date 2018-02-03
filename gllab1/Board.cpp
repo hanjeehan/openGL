@@ -38,8 +38,6 @@ Board::Board(int size, int nsquare) : size(size), nsquare(nsquare)
         color = !color;
     }
 
-    std::cout << vlist.size() << " vertices and " << clist.size() << " colors" << std::endl;
-
     shaderProgram = new ShaderProgram();
     shaderProgram->initFromFiles("simple.vert", "simple.frag");
 
